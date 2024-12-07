@@ -3,40 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YouTube to mp3</title>
+    <title>YouTube Player</title>
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
-        input[type="text"], button { padding: 10px; margin: 10px; }
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        input, button {
+            padding: 10px;
+            margin: 10px;
+            font-size: 16px;
+        }
+        iframe {
+            margin-top: 20px;
+            width: 80%;
+            height: 400px;
+        }
     </style>
 </head>
 <body>
-    <h1>Simple YouTube to MP3 Converter</h1>
-    <form id="ytForm">
-        <input type="text" id="youtubeLink" placeholder="Enter YouTube URL" required>
-        <button type="submit">Convert</button>
-    </form>
-    <p id="status"></p>
+    <h1>YouTube Player</h1>
+    <p>Enter a YouTube URL to play:</p>
+    <input type="text" id="youtubeUrl" placeholder="Enter YouTube URL" required>
+    <button onclick="loadVideo()">Play</button>
+    <div id="player"></div>
+    <button id="downloadBtn" style="display: none;">Download (Mock)</button>
+
     <script>
-        document.getElementById('ytForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const youtubeLink = document.getElementById('youtubeLink').value;
-            document.getElementById('status').innerText = "Processing...";
-            try {
-                const response = await fetch('https://your-backend-url.com/convert', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ url: youtubeLink })
-                });
-                const data = await response.json();
-                if (data.success) {
-                    document.getElementById('status').innerHTML = `<a href="${data.fileUrl}" download>Download MP3</a>`;
-                } else {
-                    document.getElementById('status').innerText = "Error: " + data.message;
-                }
-            } catch (err) {
-                document.getElementById('status').innerText = "An error occurred.";
+        function extractVideoId(url) {
+            const regExp = /(?:youtube\.com\/(?:[^/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?/\s]{11})/;
+            const match = url.match(regExp);
+            return match ? match[1] : null;
+        }
+
+        function loadVideo() {
+            const url = document.getElementById('youtubeUrl').value;
+            const videoId = extractVideoId(url);
+
+            if (videoId) {
+                const iframe = `
+                    <iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1"
+                            frameborder="0" allow="autoplay; encrypted-media" allowfullscreen>
+                    </iframe>`;
+                document.getElementById('player').innerHTML = iframe;
+                document.getElementById('downloadBtn').style.display = 'block';
+            } else {
+                alert('Invalid YouTube URL. Please try again.');
             }
-        });
+        }
+
+        // Mock download button functionality
+        document.getElementById('downloadBtn').onclick = () => {
+            alert('This is a mock button. Add functionality here if needed.');
+        };
     </script>
 </body>
 </html>
