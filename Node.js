@@ -22,7 +22,7 @@ app.post('/convert', async (req, res) => {
             .audioBitrate(128)
             .save(outputPath)
             .on('end', () => {
-                res.json({ success: true, fileUrl: `http://your-backend-url.com/files/${videoID}.mp3` });
+                res.json({ success: true, fileUrl: `http://michaelllk.github.io/YouTube-to-mp3/${videoID}.mp3` });
             })
             .on('error', (err) => {
                 console.error(err);
